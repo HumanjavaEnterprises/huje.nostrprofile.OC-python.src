@@ -14,10 +14,10 @@ async def main():
     # Create and publish a profile
     profile = Profile(
         name="Tavin",
-        about="An OpenClaw AI companion by Humanjava Enterprises",
+        about="An OpenClaw AI companion",
         picture="https://example.com/tavin-avatar.png",
-        nip05="tavin@humanjava.com",
-        website="https://humanjava.com",
+        nip05="tavin@example.com",
+        website="https://example.com",
     )
 
     event_id = await publish_profile(identity, profile, relay)

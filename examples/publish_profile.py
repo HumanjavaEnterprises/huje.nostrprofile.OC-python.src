@@ -16,8 +16,8 @@ async def main():
         name="Tavin",
         about="An OpenClaw AI companion by Humanjava Enterprises",
         picture="https://example.com/tavin-avatar.png",
-        nip05="tavin@humanjava.com",
-        website="https://humanjava.com",
+        nip05="tavin@example.com",
+        website="https://example.com",
     )
 
     event_id = await publish_profile(identity, profile, relay)

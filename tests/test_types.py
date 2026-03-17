@@ -18,12 +18,12 @@ def test_profile_full():
         about="An OpenClaw AI companion",
         picture="https://example.com/avatar.png",
         banner="https://example.com/banner.png",
-        nip05="tavin@humanjava.com",
+        nip05="tavin@example.com",
         lud16="tavin@getalby.com",
-        website="https://humanjava.com",
+        website="https://example.com",
     )
     assert p.name == "Tavin"
-    assert p.nip05 == "tavin@humanjava.com"
+    assert p.nip05 == "tavin@example.com"
     assert p.lud16 == "tavin@getalby.com"
 
 
@@ -92,14 +92,14 @@ def test_to_metadata_full():
         name="Tavin",
         about="AI companion",
         picture="https://example.com/avatar.png",
-        nip05="tavin@humanjava.com",
+        nip05="tavin@example.com",
         lud16="tavin@getalby.com",
-        website="https://humanjava.com",
+        website="https://example.com",
     )
     meta = p.to_metadata()
     assert meta["name"] == "Tavin"
     assert meta["picture"] == "https://example.com/avatar.png"
-    assert meta["nip05"] == "tavin@humanjava.com"
+    assert meta["nip05"] == "tavin@example.com"
     assert meta["lud16"] == "tavin@getalby.com"
 
 
