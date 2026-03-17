@@ -72,7 +72,7 @@ profile = Profile(
     picture="https://example.com/avatar.png",
     banner="https://example.com/banner.png",
     nip05="johnny5@example.com",
-    lud16="johnny5@getalby.com",
+    lud16="johnny5@example.com",
     website="https://example.com",
 )
 event_id = await publish_profile(identity, profile, relay)

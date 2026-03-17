@@ -19,12 +19,12 @@ def test_profile_full():
         picture="https://example.com/avatar.png",
         banner="https://example.com/banner.png",
         nip05="johnny5@example.com",
-        lud16="johnny5@getalby.com",
+        lud16="johnny5@example.com",
         website="https://example.com",
     )
     assert p.name == "Johnny5"
     assert p.nip05 == "johnny5@example.com"
-    assert p.lud16 == "johnny5@getalby.com"
+    assert p.lud16 == "johnny5@example.com"
 
 
 def test_profile_rejects_empty_name():
@@ -93,14 +93,14 @@ def test_to_metadata_full():
         about="AI companion",
         picture="https://example.com/avatar.png",
         nip05="johnny5@example.com",
-        lud16="johnny5@getalby.com",
+        lud16="johnny5@example.com",
         website="https://example.com",
     )
     meta = p.to_metadata()
     assert meta["name"] == "Johnny5"
     assert meta["picture"] == "https://example.com/avatar.png"
     assert meta["nip05"] == "johnny5@example.com"
-    assert meta["lud16"] == "johnny5@getalby.com"
+    assert meta["lud16"] == "johnny5@example.com"
 
 
 def test_from_metadata_basic():
