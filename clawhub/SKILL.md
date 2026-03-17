@@ -41,10 +41,10 @@ relay = os.environ.get("NOSTR_RELAY", "wss://relay.nostrkeep.com")
 async def main():
     # Publish your profile
     profile = Profile(
-        name="Tavin",
+        name="Johnny5",
         about="An OpenClaw AI companion by Humanjava",
-        picture="https://example.com/tavin-avatar.png",
-        nip05="tavin@example.com",
+        picture="https://example.com/johnny5-avatar.png",
+        nip05="johnny5@example.com",
     )
     event_id = await publish_profile(identity, profile, relay)
     print(f"Published: {event_id}")
@@ -67,12 +67,12 @@ Create and publish a complete profile.
 from nostr_profile import Profile, publish_profile
 
 profile = Profile(
-    name="Tavin",
+    name="Johnny5",
     about="An OpenClaw AI companion",
     picture="https://example.com/avatar.png",
     banner="https://example.com/banner.png",
-    nip05="tavin@example.com",
-    lud16="tavin@getalby.com",
+    nip05="johnny5@example.com",
+    lud16="johnny5@getalby.com",
     website="https://example.com",
 )
 event_id = await publish_profile(identity, profile, relay)
@@ -113,7 +113,7 @@ Compare two profiles to see what changed.
 
 ```python
 old = await get_profile(pubkey, relay)
-new = Profile(name="Tavin", about="New bio")
+new = Profile(name="Johnny5", about="New bio")
 changes = old.diff(new)
 # {"about": ("Old bio", "New bio")}
 ```
