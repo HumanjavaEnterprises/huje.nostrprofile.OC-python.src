@@ -1,0 +1,37 @@
+{
+  "slug": "nostr-profile",
+  "name": "nostr-profile",
+  "version": "0.1.0",
+  "summary": "Nostr profile management for AI agents — publish, read, and update kind 0 metadata on any relay",
+  "author": {
+    "name": "Humanjava Enterprises",
+    "url": "https://huje.tools"
+  },
+  "license": "MIT",
+  "acceptLicenseTerms": true,
+  "repository": "https://github.com/HumanjavaEnterprises/huje.nostrprofile.OC-python.src",
+  "tags": [
+    "nostr",
+    "profile",
+    "identity",
+    "metadata",
+    "nip-01",
+    "nip-05",
+    "ai-identity",
+    "sovereign"
+  ],
+  "install": {
+    "pip": "nostr-profile"
+  },
+  "requires": {
+    "python": ">=3.10"
+  },
+  "dependencies": [
+    "nostrkey"
+  ],
+  "categories": [
+    "identity",
+    "communication",
+    "productivity"
+  ]
+}
