@@ -1,7 +1,7 @@
 {
   "slug": "nostr-profile",
   "name": "nostr-profile",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "summary": "Nostr profile management for AI agents — publish, read, and update kind 0 metadata on any relay",
   "author": {
     "name": "Humanjava Enterprises",
@@ -27,8 +27,19 @@
     "python": ">=3.10"
   },
   "dependencies": [
-    "nostrkey"
+    "nostrkey>=0.1.1"
   ],
+  "env": {
+    "NOSTRKEY_PASSPHRASE": {
+      "description": "Passphrase to decrypt the agent's identity file for signing profile events",
+      "required": true,
+      "sensitive": true
+    },
+    "NOSTR_RELAY": {
+      "description": "Relay URL to publish/read profiles (default: wss://relay.nostrkeep.com)",
+      "required": false
+    }
+  },
   "categories": [
     "identity",
     "communication",

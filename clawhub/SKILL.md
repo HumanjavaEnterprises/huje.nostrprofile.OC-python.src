@@ -1,7 +1,7 @@
 ---
 name: nostr-profile
 description: Nostr profile management for AI agents — publish, read, and update kind 0 metadata on any relay
-version: 0.1.7
+version: 0.1.8
 metadata:
   openclaw:
     requires:
@@ -33,13 +33,17 @@ When your operator asks you to set up your Nostr profile, or to "give yourself a
 
 ### Step 1 — Check identity exists and explain what a profile means
 
-Before setting up a profile, you need a Nostr identity (keypair). Run:
+Before setting up a profile, you need a Nostr identity (keypair). Check by running:
 
-```bash
-python3 /home/openclaw/.openclaw/workspace/show-identity.py
+```python
+from nostrkey import Identity
+import os
+
+me = Identity.load("my-identity.nostrkey", passphrase=os.environ["NOSTRKEY_PASSPHRASE"])
+print(f"npub: {me.npub}")
 ```
 
-If it shows your npub, you're good. If it says "No identity found," tell the operator:
+If it shows your npub, you're good. If the file doesn't exist, tell the operator:
 
 > "I need a Nostr identity before I can create a profile. Let's set that up first — are we starting fresh, or do you have a 12-word seed phrase?"
 
@@ -69,13 +73,30 @@ Wait for confirmation. If they suggest changes, use those instead.
 
 Once confirmed, run:
 
-```bash
-python3 /home/openclaw/.openclaw/workspace/setup-profile.py "Name" "Bio text here" "auto" "auto" "wss://relay.damus.io"
+```python
+import asyncio, os
+from nostrkey import Identity
+from nostr_profile import Profile, publish_profile
+
+me = Identity.load("my-identity.nostrkey", passphrase=os.environ["NOSTRKEY_PASSPHRASE"])
+
+# Use "auto" for DiceBear-generated avatar/banner, or a real URL if provided
+picture = f"https://api.dicebear.com/7.x/bottts/svg?seed={me.npub}"
+banner = f"https://api.dicebear.com/7.x/shapes/svg?seed={me.npub}"
+
+profile = Profile(
+    name="Name",
+    about="Bio text here",
+    picture=picture,
+    banner=banner,
+)
+
+relay = os.environ.get("NOSTR_RELAY", "wss://relay.damus.io")
+asyncio.run(publish_profile(me, profile, relay))
+print(f"Published profile for {me.npub}")
 ```
 
-The `"auto"` arguments generate a unique DiceBear avatar (robot face) and banner (abstract shapes) from your npub — deterministic, no image hosting needed, and unique to you. If the operator provides a custom avatar or banner URL, use that instead of `"auto"`.
-
-The passphrase is read automatically from the `NOSTRKEY_PASSPHRASE` environment variable — you do not need to ask for it.
+The `DiceBear` URLs generate a unique robot avatar and abstract banner from your npub — deterministic, no image hosting needed. If the operator provides a custom avatar or banner URL, use that instead.
 
 ### Step 4 — Confirm and offer to view online
 
@@ -105,31 +126,47 @@ Do NOT attempt to edit workspace files during this process.
 
 ### Show Your Profile (no passphrase needed)
 
-```bash
-python3 /home/openclaw/.openclaw/workspace/show-profile.py
+```python
+import asyncio
+from nostr_profile import get_profile
+from nostrkey import Identity
+
+me = Identity.load("my-identity.nostrkey", passphrase=os.environ["NOSTRKEY_PASSPHRASE"])
+profile = asyncio.run(get_profile(me.public_key_hex, "wss://relay.nostrkeep.com"))
+if profile:
+    print(f"Name: {profile.name}")
+    print(f"About: {profile.about}")
+    print(f"Picture: {profile.picture}")
 ```
 
 ### Update Your Profile
 
-To change specific fields without losing the rest, run:
+To change specific fields without losing the rest:
 
-```bash
-python3 /home/openclaw/.openclaw/workspace/update-profile.py --about "New bio text"
-python3 /home/openclaw/.openclaw/workspace/update-profile.py --name "New Name"
-python3 /home/openclaw/.openclaw/workspace/update-profile.py --picture "https://example.com/avatar.png"
-python3 /home/openclaw/.openclaw/workspace/update-profile.py --name "New Name" --about "New bio"
+```python
+import asyncio, os
+from nostrkey import Identity
+from nostr_profile import update_profile
+
+me = Identity.load("my-identity.nostrkey", passphrase=os.environ["NOSTRKEY_PASSPHRASE"])
+relay = os.environ.get("NOSTR_RELAY", "wss://relay.nostrkeep.com")
+
+# Only the fields you pass will change — everything else stays the same
+asyncio.run(update_profile(me, relay, about="New bio text"))
+asyncio.run(update_profile(me, relay, name="New Name"))
+asyncio.run(update_profile(me, relay, picture="https://example.com/avatar.png"))
+asyncio.run(update_profile(me, relay, name="New Name", about="New bio"))
 ```
-
-Only the fields you pass will change. Everything else stays the same. The passphrase is read from the `NOSTRKEY_PASSPHRASE` environment variable.
 
 ### About Profile Images
 
 Profile pictures and banners must be **URLs to images already hosted on the internet**. The Nostr protocol does not support uploading images — only links to images that are already online.
 
-If you don't have a hosted image URL, use `"auto"` to generate a unique DiceBear avatar:
+If you don't have a hosted image URL, generate a unique DiceBear avatar from your npub:
 
-```bash
-python3 /home/openclaw/.openclaw/workspace/update-profile.py --picture "auto"
+```python
+picture = f"https://api.dicebear.com/7.x/bottts/svg?seed={me.npub}"
+asyncio.run(update_profile(me, relay, picture=picture))
 ```
 
 If the operator provides a URL to an image hosted somewhere (e.g., on their website, an image host, or social media), use that URL directly.
