@@ -1,7 +1,7 @@
 ---
 name: nostr-profile
 description: Nostr profile management for AI agents — publish, read, and update kind 0 metadata on any relay
-version: 0.1.5
+version: 0.1.6
 metadata:
   openclaw:
     requires:

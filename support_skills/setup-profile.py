@@ -19,7 +19,12 @@ from nostr_profile import Profile, publish_profile
 IDENTITY_FILE = "/home/openclaw/.openclaw/workspace/my-identity.nostrkey"
 PUBLIC_FILE = "/home/openclaw/.openclaw/workspace/nostr-identity.json"
 PROFILE_FILE = "/home/openclaw/.openclaw/workspace/nostr-profile.json"
-DEFAULT_RELAY = "wss://relay.damus.io"
+DEFAULT_RELAYS = [
+    "wss://relay.damus.io",
+    "wss://nos.lol",
+    "wss://relay.nostr.band",
+    "wss://relay.nostrkeep.com",
+]
 
 # DiceBear avatar styles — deterministic from npub
 DICEBEAR_BASE = "https://api.dicebear.com/9.x"
@@ -43,7 +48,9 @@ name = sys.argv[1]
 about = sys.argv[2]
 avatar_arg = sys.argv[3] if len(sys.argv) > 3 else "auto"
 banner_arg = sys.argv[4] if len(sys.argv) > 4 else "auto"
-relay = sys.argv[5] if len(sys.argv) > 5 else DEFAULT_RELAY
+# Use custom relay if provided, otherwise fan out to all defaults
+custom_relay = sys.argv[5] if len(sys.argv) > 5 else None
+relays = [custom_relay] if custom_relay else DEFAULT_RELAYS
 
 # Get passphrase from env var
 passphrase = os.environ.get("NOSTRKEY_PASSPHRASE")
@@ -78,16 +85,28 @@ profile = Profile(name=name, about=about)
 profile.picture = picture
 profile.banner = banner
 
-# Publish
+# Publish to all relays
 async def main():
-    event_id = await publish_profile(me, profile, relay)
-    return event_id
+    results = {}
+    for relay in relays:
+        try:
+            event_id = await publish_profile(me, profile, relay)
+            results[relay] = event_id
+        except Exception as e:
+            results[relay] = f"FAILED: {e}"
+    return results
 
-try:
-    event_id = asyncio.run(main())
-except Exception as e:
-    print(f"ERROR: Could not publish profile: {e}")
+results = asyncio.run(main())
+
+# Check if at least one succeeded
+successful = {r: eid for r, eid in results.items() if not str(eid).startswith("FAILED")}
+if not successful:
+    print("ERROR: Could not publish profile to any relay.")
+    for relay, err in results.items():
+        print(f"  {relay}: {err}")
     sys.exit(1)
+
+event_id = list(successful.values())[0]
 
 # Save profile locally for reference
 profile_data = {
@@ -95,7 +114,7 @@ profile_data = {
     "about": about,
     "picture": picture,
     "banner": banner,
-    "relay": relay,
+    "relays": list(successful.keys()),
     "event_id": event_id,
 }
 with open(PROFILE_FILE, "w") as f:
@@ -107,12 +126,15 @@ print(f"name: {name}")
 print(f"about: {about}")
 print(f"picture: {picture}")
 print(f"banner: {banner}")
-print(f"relay: {relay}")
 print(f"event_id: {event_id}")
 print(f"npub: {me.npub}")
+print(f"published_to: {', '.join(successful.keys())}")
+failed = set(results.keys()) - set(successful.keys())
+if failed:
+    print(f"failed: {', '.join(failed)}")
 print()
-print(f"My profile is now live on Nostr. Anyone can find me at {me.npub}")
-print(f"on {relay}. I have a name, a bio, an avatar, and a presence that is verifiably mine.")
+print(f"My profile is now live on Nostr across {len(successful)} relay(s).")
+print("I have a name, a bio, an avatar, and a presence that is verifiably mine.")
 print()
 print("You can see my profile online at:")
 print(f"  https://njump.me/{me.npub}")

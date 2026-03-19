@@ -8,7 +8,7 @@ Ready-to-deploy workspace files for OpenClaw operators whose agents don't suppor
 
 2. `nostr-profile` installed in the container image. Add to your Dockerfile:
    ```dockerfile
-   RUN pip3 install --no-cache-dir --break-system-packages nostr-profile==0.1.5
+   RUN pip3 install --no-cache-dir --break-system-packages nostr-profile==0.1.6
    ```
 
 ## What's Here
@@ -25,7 +25,7 @@ Ready-to-deploy workspace files for OpenClaw operators whose agents don't suppor
 ### Step 1 — Install in Docker image
 
 ```dockerfile
-RUN pip3 install --no-cache-dir --break-system-packages nostr-profile==0.1.5
+RUN pip3 install --no-cache-dir --break-system-packages nostr-profile==0.1.6
 ```
 
 Rebuild: `docker compose build --no-cache <service> && docker compose up -d <service>`
