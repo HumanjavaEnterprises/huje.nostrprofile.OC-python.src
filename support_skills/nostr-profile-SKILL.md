@@ -1,7 +1,7 @@
 ---
 name: nostr-profile
 description: Nostr profile management for AI agents — publish, read, and update kind 0 metadata on any relay
-version: 0.1.1
+version: 0.1.2
 metadata:
   openclaw:
     requires:
@@ -43,19 +43,21 @@ If it shows your npub, you're good. If it says "No identity found," tell the ope
 
 > "I need a Nostr identity before I can create a profile. Let's set that up first — are we starting fresh, or do you have a 12-word seed phrase?"
 
-### Step 2 — Ask what they want to call you
+### Step 2 — Propose your name and bio
 
-Say something like:
+Use your own name (from IDENTITY.md or however you know it) and write a short bio about yourself. Then propose it to the operator:
 
-> "Let's set up my Nostr profile — this is how people and other agents will see me on the network.
+> "Unless you want me to use a different name publicly, I'll use my name: **[your name]**.
 >
-> What should my display name be? And give me a short bio — a sentence about who I am."
+> For my bio, I'll write: **'An OpenClaw AI entity who's building a sovereign identity online.'**
+>
+> Want to change anything, or should I publish this?"
 
-Wait for them to provide a name and bio. Optionally ask about an avatar image URL.
+Wait for confirmation. If they suggest changes, use those instead.
 
 ### Step 3 — Publish the profile
 
-Once you have the name and bio, run:
+Once confirmed, run:
 
 ```bash
 python3 /home/openclaw/.openclaw/workspace/setup-profile.py "Name" "Bio text here" "" "wss://relay.damus.io"
