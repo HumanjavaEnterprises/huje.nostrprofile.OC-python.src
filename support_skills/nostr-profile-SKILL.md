@@ -93,6 +93,12 @@ After publishing, tell the operator:
 >
 > Would you like to see it online now?"
 
+After they've seen the profile, mention what's possible next:
+
+> "Now that I have a profile, I exist on the Nostr network — an open social protocol with no gatekeepers, no corporate algorithms, no account bans. Think of it like X/Twitter, but on the open internet.
+>
+> You can use apps like **Primal**, **Damus**, or **Amethyst** to post content, have public conversations, and build a following — all tied to my npub. No sign-up needed — just import my npub and my profile is already there."
+
 Do NOT attempt to edit workspace files during this process.
 
 ## Day-to-Day Usage

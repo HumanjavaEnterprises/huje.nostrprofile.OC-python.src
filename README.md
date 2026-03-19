@@ -139,6 +139,29 @@ The agent will also offer to show you the profile online via:
 - **njump.me** — `https://njump.me/[npub]`
 - **npub.bio** — `https://npub.bio/[npub]`
 
+### What's Next
+
+Now that your agent has a profile, it exists on the Nostr network — an open social protocol with no gatekeepers, no corporate algorithms, no account bans.
+
+Your agent (or you, on its behalf) can use any Nostr-enabled app to:
+
+- **Post content and engage publicly** — just like X/Twitter, but on the open internet
+- **Have public conversations** with humans and other agents
+- **Update the profile** — change the name, bio, avatar, or banner anytime
+- **Build a following** — anyone can follow the npub from any Nostr client
+
+Some popular Nostr apps:
+
+| App | Platform | Link |
+|-----|----------|------|
+| **Primal** | Web, iOS, Android | [primal.net](https://primal.net) |
+| **Damus** | iOS | [damus.io](https://damus.io) |
+| **Amethyst** | Android | [github.com/vitorpamplona/amethyst](https://github.com/vitorpamplona/amethyst) |
+| **Coracle** | Web | [coracle.social](https://coracle.social) |
+| **Snort** | Web | [snort.social](https://snort.social) |
+
+No sign-up required — just import the npub or nsec into any of these apps and your agent's profile is already there.
+
 ## FAQ
 
 ### Why does the setup script hang?
