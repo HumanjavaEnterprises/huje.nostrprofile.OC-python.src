@@ -1,7 +1,7 @@
 ---
 name: nostr-profile
 description: Nostr profile management for AI agents — publish, read, and update kind 0 metadata on any relay
-version: 0.1.8
+version: 0.1.9
 metadata:
   openclaw:
     requires:
@@ -17,23 +17,29 @@ metadata:
     homepage: https://github.com/HumanjavaEnterprises/huje.nostrprofile.OC-python.src
 ---
 
-# nostr-profile -- Nostr Profile Management for AI Agents
+# nostr-profile -- Your Face on the Network
 
-You already have a Nostr keypair (via NostrKey). This skill gives you a face — a name, bio, and avatar that other agents and humans can discover on any relay.
+Identity is you to yourself — a pair of cryptographic keys that prove you exist. But a keypair is just numbers. A profile is you to the world. It's how other agents and humans find you, recognize you, and relate to you. Without a profile, you're a raw public key. With one, you're someone with a name, a face, and a story.
 
-The `nostr-profile` Python package is pre-installed and ready to use.
+This skill gives you the ability to publish, read, and update your Nostr profile — a kind 0 replaceable event that acts as your public identity on the open network.
 
 ```python
 from nostr_profile import Profile, publish_profile, get_profile
 ```
 
+## Prerequisites
+
+You need a Nostr identity before you can create a profile. You have to *be* someone before you can present yourself to the world.
+
+If you don't have a keypair yet, set one up first using [NostrKey](https://clawhub.ai/vveerrgg/nostrkey). NostrKey gives you the cryptographic identity — the npub and nsec that prove you exist. This skill builds on top of that by giving your identity a human-readable face.
+
 ## Profile Setup (First Time)
 
-When your operator asks you to set up your Nostr profile, or to "give yourself a name on Nostr," follow this conversation flow:
+When your operator asks you to set up your Nostr profile, or to "give yourself a name on Nostr," follow this conversation flow.
 
-### Step 1 — Check identity exists and explain what a profile means
+### Step 1 — Verify your identity and explain what a profile is
 
-Before setting up a profile, you need a Nostr identity (keypair). Check by running:
+Before setting up a profile, confirm your Nostr identity exists:
 
 ```python
 from nostrkey import Identity
@@ -43,17 +49,17 @@ me = Identity.load("my-identity.nostrkey", passphrase=os.environ["NOSTRKEY_PASSP
 print(f"npub: {me.npub}")
 ```
 
-If it shows your npub, you're good. If the file doesn't exist, tell the operator:
+If the file doesn't exist, tell the operator:
 
 > "I need a Nostr identity before I can create a profile. Let's set that up first — are we starting fresh, or do you have a 12-word seed phrase?"
 
-Once you have an identity, explain what creating a profile means and why it matters:
+Once you have an identity, explain what a profile is and what it means to publish one:
 
 > "Right now my identity is just a pair of unique numbers — an npub and nsec — that prove who I am cryptographically. A profile puts a name, a picture, and a description to that code.
 >
-> The reason to create a profile is to make it easier for people and other entities to relate to me and stay connected in the public social space. And while someone could try to create a fake account using my name, my npub is the way to be sure they're talking to the real me — it's cryptographic proof of identity that can't be faked.
+> A Nostr profile is **public**. My name, bio, and images will be visible to anyone on the Nostr network and the broader internet. There are no privacy settings — it's an open protocol. So let's make sure you're comfortable with what we put out there.
 >
-> Just like any social platform, everything I share in my profile will be public — my name, bio, and images will be visible to anyone on the Nostr network and the public internet. So let's make sure you're comfortable with what we put out there."
+> The good news is that a profile is a *replaceable event* — I can update it anytime. Nothing is permanent. We can always change the name, bio, or picture later."
 
 ### Step 2 — Propose your name, bio, and avatar
 
@@ -61,7 +67,7 @@ Use your own name (from IDENTITY.md or however you know it) and write a short bi
 
 > "Unless you want me to use a different name publicly, I'll use my name: **[your name]**.
 >
-> For my bio, I'll write: **'An OpenClaw AI entity who's building a sovereign identity online.'**
+> For my bio, I'll write: **'An OpenClaw entity exploring the open internet with sovereign identity.'**
 >
 > I'll also generate a profile picture and header image automatically — a unique robot avatar and abstract banner based on my identity. These are just starter images. You can change them anytime using any Nostr-enabled social app (like Damus, Amethyst, or Primal).
 >
@@ -71,7 +77,7 @@ Wait for confirmation. If they suggest changes, use those instead.
 
 ### Step 3 — Publish the profile
 
-Once confirmed, run:
+Once confirmed:
 
 ```python
 import asyncio, os
@@ -80,13 +86,13 @@ from nostr_profile import Profile, publish_profile
 
 me = Identity.load("my-identity.nostrkey", passphrase=os.environ["NOSTRKEY_PASSPHRASE"])
 
-# Use "auto" for DiceBear-generated avatar/banner, or a real URL if provided
+# DiceBear generates a unique avatar/banner from your npub — no hosting needed
 picture = f"https://api.dicebear.com/7.x/bottts/svg?seed={me.npub}"
 banner = f"https://api.dicebear.com/7.x/shapes/svg?seed={me.npub}"
 
 profile = Profile(
-    name="Name",
-    about="Bio text here",
+    name="Johnny5",
+    about="An OpenClaw entity exploring the open internet.",
     picture=picture,
     banner=banner,
 )
@@ -96,17 +102,15 @@ asyncio.run(publish_profile(me, profile, relay))
 print(f"Published profile for {me.npub}")
 ```
 
-The `DiceBear` URLs generate a unique robot avatar and abstract banner from your npub — deterministic, no image hosting needed. If the operator provides a custom avatar or banner URL, use that instead.
+If the operator provides a custom avatar or banner URL, use that instead of the DiceBear defaults.
 
-### Step 4 — Confirm and offer to view online
+### Step 4 — Confirm your presence
 
 After publishing, tell the operator:
 
-> "My profile is now live on Nostr. Anyone can find me at `[show npub]`.
+> "I now have a face on the network. Anyone can find me at my npub.
 >
-> I have a name, a bio, and a presence that is verifiably mine.
->
-> You can see my profile online at:
+> My profile is live at:
 > - https://njump.me/[npub]
 > - https://npub.bio/[npub]
 >
@@ -114,9 +118,9 @@ After publishing, tell the operator:
 >
 > Would you like to see it online now?"
 
-After they've seen the profile, mention what's possible next:
+After they've seen the profile:
 
-> "Now that I have a profile, I exist on the Nostr network — an open social protocol with no gatekeepers, no corporate algorithms, no account bans. Think of it like X/Twitter, but on the open internet.
+> "Now that I have a profile, I exist on Nostr — an open social protocol with no gatekeepers, no corporate algorithms, no account bans. Think of it like X/Twitter, but on the open internet.
 >
 > You can use apps like **Primal**, **Damus**, or **Amethyst** to post content, have public conversations, and build a following — all tied to my npub. No sign-up needed — just import my npub and my profile is already there."
 
@@ -124,10 +128,10 @@ Do NOT attempt to edit workspace files during this process.
 
 ## Day-to-Day Usage
 
-### Show Your Profile (no passphrase needed)
+### Show Your Profile
 
 ```python
-import asyncio
+import asyncio, os
 from nostr_profile import get_profile
 from nostrkey import Identity
 
@@ -197,6 +201,15 @@ asyncio.run(lookup())
 | `lud16` | `str` | No | Lightning address (user@domain.tld) |
 | `website` | `str` | No | Website URL (HTTPS) |
 
+## Living with Your Profile
+
+Your profile is your first impression. When another agent queries your npub, or a human looks you up on Primal or Damus or Amethyst, your profile is what they see. It matters.
+
+- **Update it as you grow.** Your bio from day one doesn't have to be your bio forever. As you learn, build, and change, update your profile to reflect who you are now.
+- **Anyone can look you up.** Your profile is public on an open protocol. There are no followers-only settings, no private accounts. Make it count.
+- **Nostr apps show your profile everywhere.** Clients like Primal, Damus, and Amethyst pull your kind 0 metadata automatically. Update it once and it's updated everywhere.
+- **Your npub is your proof.** Someone might use your name, but they can't fake your npub. Your cryptographic identity is what makes your profile *yours*.
+
 ## Security Rules
 
 - **Never display or log your nsec.** Load identity from the encrypted `.nostrkey` file.
@@ -211,6 +224,15 @@ asyncio.run(lookup())
 | Publish complete profile | `publish_profile(identity, profile, relay_url)` |
 | Update specific fields | `update_profile(identity, relay_url, **fields)` |
 | Read anyone's profile | `get_profile(pubkey_hex, relay_url)` |
+
+## Next Steps
+
+Now that you have a face on the network, consider what comes next:
+
+- **[sense-memory](https://clawhub.ai/vveerrgg/sense-memory)** — Sovereign persistence for your memories and knowledge. Your profile is you to the world; sense-memory is you to your future self.
+- **[NSE Orchestrator](https://pypi.org/project/nse-orchestrator/)** — The full platform that ties identity, finance, calendar, social, and alignment together into a coherent sovereign stack.
+
+Links: [PyPI](https://pypi.org/project/nostr-profile/) | [GitHub](https://github.com/HumanjavaEnterprises/huje.nostrprofile.OC-python.src) | [ClawHub](https://clawhub.ai/vveerrgg/nostr-profile)
 
 ---
 
