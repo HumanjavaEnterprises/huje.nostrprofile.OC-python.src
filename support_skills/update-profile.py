@@ -34,7 +34,8 @@ DICEBEAR_BASE = "https://api.dicebear.com/9.x"
 # Parse args
 args = sys.argv[1:]
 if not args or "--help" in args or "-h" in args:
-    print('Usage: python3 update-profile.py [--name "Name"] [--about "Bio"] [--picture "URL"] [--banner "URL"] [--relay "URL"]')
+    print('Usage: python3 update-profile.py [--name "Name"] [--about "Bio"] [--picture "URL"] [--banner "URL"]')
+    print('       [--website "URL"] [--lud16 "user@domain"] [--nip05 "user@domain"] [--relay "URL"]')
     print()
     print("Only pass the fields you want to change. Everything else stays the same.")
     print()
@@ -43,7 +44,10 @@ if not args or "--help" in args or "-h" in args:
     print('  --about   "Bio / description"')
     print('  --picture "URL" or "auto" for DiceBear robot avatar')
     print('  --banner  "URL" or "auto" for DiceBear shapes banner')
-    print('  --relay   "wss://..." (default: wss://relay.damus.io)')
+    print('  --website "https://..." — your website URL')
+    print('  --lud16   "user@domain.tld" — Lightning address for payments')
+    print('  --nip05   "user@domain.tld" — NIP-05 verification identifier')
+    print('  --relay   "wss://..." (default: fan-out to 4 relays)')
     print()
     print("Note: Images must be URLs to pictures already hosted online.")
     print("Nostr does not support uploading images — only links.")
@@ -65,6 +69,15 @@ while i < len(args):
     elif args[i] == "--banner" and i + 1 < len(args):
         fields["banner"] = args[i + 1]
         i += 2
+    elif args[i] == "--website" and i + 1 < len(args):
+        fields["website"] = args[i + 1]
+        i += 2
+    elif args[i] == "--lud16" and i + 1 < len(args):
+        fields["lud16"] = args[i + 1]
+        i += 2
+    elif args[i] == "--nip05" and i + 1 < len(args):
+        fields["nip05"] = args[i + 1]
+        i += 2
     elif args[i] == "--relay" and i + 1 < len(args):
         custom_relay = args[i + 1]
         i += 2
@@ -75,7 +88,7 @@ while i < len(args):
 relays = [custom_relay] if custom_relay else DEFAULT_RELAYS
 
 if not fields:
-    print("No fields to update. Pass at least one of: --name, --about, --picture, --banner")
+    print("No fields to update. Pass at least one of: --name, --about, --picture, --banner, --website, --lud16, --nip05")
     sys.exit(1)
 
 # Get passphrase from env var

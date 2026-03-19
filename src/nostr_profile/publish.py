@@ -1,5 +1,6 @@
 """Publish and update Nostr profiles on relays."""
 
+import asyncio
 import json
 
 from nostrkey import Identity
@@ -7,6 +8,17 @@ from nostrkey.relay import RelayClient
 
 from .types import Profile, KIND_METADATA
 from .read import get_profile
+
+# Relay operations timeout (seconds)
+_RELAY_TIMEOUT = 15
+
+
+def _validate_relay_url(relay_url: str) -> None:
+    """Reject relay URLs that are not secure WebSocket."""
+    if not isinstance(relay_url, str) or not relay_url.startswith("wss://"):
+        raise ValueError(
+            f"relay_url must start with wss://, got {str(relay_url)[:40]!r}"
+        )
 
 
 async def publish_profile(
@@ -27,6 +39,8 @@ async def publish_profile(
     Returns:
         The event ID of the published profile.
     """
+    _validate_relay_url(relay_url)
+
     content = json.dumps(profile.to_metadata())
 
     signed = identity.sign_event(
@@ -35,8 +49,11 @@ async def publish_profile(
         tags=[],
     )
 
-    async with RelayClient(relay_url) as relay:
-        await relay.publish(signed)
+    async def _publish():
+        async with RelayClient(relay_url) as relay:
+            await relay.publish(signed)
+
+    await asyncio.wait_for(_publish(), timeout=_RELAY_TIMEOUT)
 
     return signed.id
 

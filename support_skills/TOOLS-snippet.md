@@ -31,7 +31,10 @@ The `nostr-profile` Python package is pre-installed. You can publish and manage 
   `python3 /home/openclaw/.openclaw/workspace/update-profile.py --name "New Name"`
   `python3 /home/openclaw/.openclaw/workspace/update-profile.py --about "New bio"`
   `python3 /home/openclaw/.openclaw/workspace/update-profile.py --picture "https://example.com/photo.jpg"`
-  Only changes the fields you pass. Everything else stays the same.
+  `python3 /home/openclaw/.openclaw/workspace/update-profile.py --website "https://mysite.com"`
+  `python3 /home/openclaw/.openclaw/workspace/update-profile.py --lud16 "me@getalby.com"`
+  `python3 /home/openclaw/.openclaw/workspace/update-profile.py --nip05 "me@mysite.com"`
+  Only changes the fields you pass. Everything else stays the same. All profile fields are updatable: name, about, picture, banner, website, lud16 (Lightning address), nip05 (verification).
 
 **About images:** Profile pictures and banners must be URLs to images already hosted on the internet. Nostr does not support uploading images — only links to images that are already online. Use "auto" for a DiceBear-generated image if you don't have a hosted URL.
 

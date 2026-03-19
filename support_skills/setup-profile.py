@@ -81,9 +81,7 @@ else:
     banner = banner_arg
 
 # Build profile
-profile = Profile(name=name, about=about)
-profile.picture = picture
-profile.banner = banner
+profile = Profile(name=name, about=about, picture=picture, banner=banner)
 
 # Publish to all relays
 async def main():

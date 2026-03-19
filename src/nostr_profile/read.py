@@ -1,5 +1,6 @@
 """Read Nostr profiles from relays."""
 
+import asyncio
 import re
 import json
 
@@ -9,8 +10,18 @@ from .types import Profile, KIND_METADATA
 
 _PUBKEY_HEX_RE = re.compile(r"^[0-9a-f]{64}$")
 
-# Safety limit for relay queries
+# Safety limits
 _MAX_EVENTS = 100
+_MAX_CONTENT_SIZE = 65_536  # 64 KB — generous for kind 0
+_RELAY_TIMEOUT = 15  # seconds
+
+
+def _validate_relay_url(relay_url: str) -> None:
+    """Reject relay URLs that are not secure WebSocket."""
+    if not isinstance(relay_url, str) or not relay_url.startswith("wss://"):
+        raise ValueError(
+            f"relay_url must start with wss://, got {str(relay_url)[:40]!r}"
+        )
 
 
 async def get_profile(
@@ -28,8 +39,11 @@ async def get_profile(
     """
     if not isinstance(pubkey_hex, str) or not _PUBKEY_HEX_RE.match(pubkey_hex):
         raise ValueError(
-            f"pubkey_hex must be a 64-character lowercase hex string, got {pubkey_hex!r}"
+            f"pubkey_hex must be a 64-character lowercase hex string, "
+            f"got {str(pubkey_hex)[:20]!r}"
         )
+
+    _validate_relay_url(relay_url)
 
     filters = {
         "kinds": [KIND_METADATA],
@@ -37,18 +51,29 @@ async def get_profile(
         "limit": 1,
     }
 
-    events = []
-    async with RelayClient(relay_url) as relay:
-        async for event in relay.subscribe([filters]):
-            events.append(event)
-            if len(events) >= _MAX_EVENTS:
-                break
+    async def _fetch():
+        events = []
+        async with RelayClient(relay_url) as relay:
+            async for event in relay.subscribe([filters]):
+                events.append(event)
+                if len(events) >= _MAX_EVENTS:
+                    break
+        return events
+
+    events = await asyncio.wait_for(_fetch(), timeout=_RELAY_TIMEOUT)
 
     if not events:
         return None
 
+    content = events[0].content
+    if len(content) > _MAX_CONTENT_SIZE:
+        raise ValueError(
+            f"Profile event content too large ({len(content)} bytes). "
+            f"Maximum is {_MAX_CONTENT_SIZE}."
+        )
+
     try:
-        data = json.loads(events[0].content)
+        data = json.loads(content)
     except json.JSONDecodeError as exc:
         raise ValueError(
             f"Failed to parse profile event content as JSON: {exc}"

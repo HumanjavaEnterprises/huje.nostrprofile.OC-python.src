@@ -1,8 +1,7 @@
 """Data types for nostr-profile — Nostr kind 0 metadata."""
 
 import re
-from dataclasses import dataclass, field
-from typing import Optional
+from dataclasses import dataclass
 
 # Kind 0 — replaceable metadata event (NIP-01)
 KIND_METADATA = 0
@@ -14,7 +13,7 @@ MAX_URL_LENGTH = 2048
 MAX_FIELD_LENGTH = 500
 
 _NIP05_RE = re.compile(r"^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
-_URL_RE = re.compile(r"^https?://\S+$")
+_URL_RE = re.compile(r"^https?://[^\s<>\"'`]+$")
 _LUD16_RE = re.compile(r"^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$")
 
 
@@ -124,7 +123,7 @@ class Profile:
         are silently dropped rather than crashing the entire parse.
         """
         name = data.get("name") or data.get("display_name") or ""
-        if not name:
+        if not isinstance(name, str) or not name:
             raise ValueError("Profile metadata must contain a 'name' or 'display_name' field")
 
         # Truncate name if too long (relay data may exceed our limits)
@@ -132,11 +131,15 @@ class Profile:
             name = name[:MAX_NAME_LENGTH]
 
         about = data.get("about", "")
+        if not isinstance(about, str):
+            about = ""
         if len(about) > MAX_ABOUT_LENGTH:
             about = about[:MAX_ABOUT_LENGTH]
 
         # Validate optional fields — drop silently if malformed
         def _safe_url(val: str) -> str:
+            if not isinstance(val, str):
+                return ""
             try:
                 _validate_url(val, "field")
                 return val
@@ -144,6 +147,8 @@ class Profile:
                 return ""
 
         def _safe_nip05(val: str) -> str:
+            if not isinstance(val, str):
+                return ""
             try:
                 _validate_nip05(val)
                 return val
@@ -151,6 +156,8 @@ class Profile:
                 return ""
 
         def _safe_lud16(val: str) -> str:
+            if not isinstance(val, str):
+                return ""
             try:
                 _validate_lud16(val)
                 return val

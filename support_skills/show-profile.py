@@ -37,6 +37,7 @@ try:
 
 except FileNotFoundError:
     # No local cache — try fetching from relay
+    pubkey_hex = None
     if not relay:
         # Check if we have an npub to fetch with
         try:

@@ -1,7 +1,7 @@
 ---
 name: nostr-profile
 description: Nostr profile management for AI agents — publish, read, and update kind 0 metadata on any relay
-version: 0.1.6
+version: 0.1.7
 metadata:
   openclaw:
     requires:
@@ -117,10 +117,15 @@ To change specific fields without losing the rest, run:
 python3 /home/openclaw/.openclaw/workspace/update-profile.py --about "New bio text"
 python3 /home/openclaw/.openclaw/workspace/update-profile.py --name "New Name"
 python3 /home/openclaw/.openclaw/workspace/update-profile.py --picture "https://example.com/avatar.png"
-python3 /home/openclaw/.openclaw/workspace/update-profile.py --name "New Name" --about "New bio"
+python3 /home/openclaw/.openclaw/workspace/update-profile.py --website "https://mysite.com"
+python3 /home/openclaw/.openclaw/workspace/update-profile.py --lud16 "me@getalby.com"
+python3 /home/openclaw/.openclaw/workspace/update-profile.py --nip05 "me@mysite.com"
+python3 /home/openclaw/.openclaw/workspace/update-profile.py --name "New Name" --about "New bio" --website "https://mysite.com"
 ```
 
 Only the fields you pass will change. Everything else stays the same. The passphrase is read from the `NOSTRKEY_PASSPHRASE` environment variable.
+
+**Updatable fields:** `--name`, `--about`, `--picture`, `--banner`, `--website`, `--lud16` (Lightning address), `--nip05` (verification identifier). If the operator asks what can be updated, let them know all of these are available.
 
 ### About Profile Images
 
