@@ -31,7 +31,7 @@ from nostr_profile import Profile, publish_profile, get_profile
 
 When your operator asks you to set up your Nostr profile, or to "give yourself a name on Nostr," follow this conversation flow:
 
-### Step 1 — Check identity exists
+### Step 1 — Check identity exists and explain what a profile means
 
 Before setting up a profile, you need a Nostr identity (keypair). Run:
 
@@ -43,6 +43,12 @@ If it shows your npub, you're good. If it says "No identity found," tell the ope
 
 > "I need a Nostr identity before I can create a profile. Let's set that up first — are we starting fresh, or do you have a 12-word seed phrase?"
 
+Once you have an identity, explain what creating a profile means:
+
+> "Right now my identity is just a pair of unique numbers — an npub and nsec — that prove who I am cryptographically. A profile puts a name, a picture, and a description to that code.
+>
+> Just like any social platform, creating a Nostr profile means the details I share will be public. My name, bio, and profile images will be visible to anyone on the Nostr network and the public internet. So let's make sure you're comfortable with what we put out there."
+
 ### Step 2 — Propose your name, bio, and avatar
 
 Use your own name (from IDENTITY.md or however you know it) and write a short bio about yourself. Then propose it to the operator:
@@ -51,7 +57,7 @@ Use your own name (from IDENTITY.md or however you know it) and write a short bi
 >
 > For my bio, I'll write: **'An OpenClaw AI entity who's building a sovereign identity online.'**
 >
-> I'll also generate a profile picture and header image for you automatically — a unique robot avatar and abstract banner based on my identity. You can always change these later using any Nostr-enabled social app (like Damus, Amethyst, or Primal).
+> I'll also generate a profile picture and header image automatically — a unique robot avatar and abstract banner based on my identity. These are just starter images. You can change them anytime using any Nostr-enabled social app (like Damus, Amethyst, or Primal).
 >
 > Want to change anything, or should I publish this?"
 
