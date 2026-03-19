@@ -3,10 +3,11 @@ Nostr Profile Setup
 Publish or update your agent's Nostr profile (kind 0 metadata).
 Usage: python3 setup-profile.py "Name" "About/bio" [avatar_url] [relay_url]
 
-Loads identity from the nostrkey encrypted file (no raw nsec needed).
+Loads identity using NOSTRKEY_PASSPHRASE env var — no need to ask the operator.
 """
 import asyncio
 import json
+import os
 import sys
 
 from nostrkey import Identity
@@ -15,27 +16,30 @@ from nostr_profile import Profile, publish_profile
 IDENTITY_FILE = "/home/openclaw/.openclaw/workspace/my-identity.nostrkey"
 PUBLIC_FILE = "/home/openclaw/.openclaw/workspace/nostr-identity.json"
 PROFILE_FILE = "/home/openclaw/.openclaw/workspace/nostr-profile.json"
-DEFAULT_RELAY = "wss://relay.nostrkeep.com"
+DEFAULT_RELAY = "wss://relay.damus.io"
 
 if len(sys.argv) < 3:
     print("Usage: python3 setup-profile.py \"Name\" \"About\" [avatar_url] [relay_url]")
     print()
     print("  Name       — display name (required)")
     print("  About      — bio/description (required)")
-    print("  avatar_url — profile picture URL (optional)")
-    print("  relay_url  — relay to publish to (optional, default: wss://relay.nostrkeep.com)")
+    print("  avatar_url — profile picture URL (optional, use \"\" to skip)")
+    print("  relay_url  — relay to publish to (optional, default: wss://relay.damus.io)")
+    print()
+    print("Passphrase is read from NOSTRKEY_PASSPHRASE env var.")
     sys.exit(1)
 
 name = sys.argv[1]
 about = sys.argv[2]
-picture = sys.argv[3] if len(sys.argv) > 3 else ""
-relay = sys.argv[4] if len(sys.argv) > 4 else DEFAULT_RELAY
+picture = sys.argv[3] if len(sys.argv) > 3 and sys.argv[3] else ""
+relay = sys.argv[4] if len(sys.argv) > 4 and sys.argv[4] else DEFAULT_RELAY
 
-# Load passphrase
-passphrase = sys.argv[5] if len(sys.argv) > 5 else None
+# Get passphrase from env var
+passphrase = os.environ.get("NOSTRKEY_PASSPHRASE")
 if not passphrase:
-    print("Enter your identity passphrase:")
-    passphrase = input().strip()
+    print("ERROR: NOSTRKEY_PASSPHRASE env var not set.")
+    print("Set it in your docker-compose.yml or .env file.")
+    sys.exit(1)
 
 # Load identity from encrypted file
 try:
@@ -81,7 +85,9 @@ print()
 print(f"My profile is now live on Nostr. Anyone can find me at {me.npub}")
 print(f"on {relay}. I have a name, a bio, and a presence that is verifiably mine.")
 print()
-print("You can ask me 'What is your Nostr profile?' at any time to see it.")
+print("You can see my profile online at:")
+print(f"  https://njump.me/{me.npub}")
+print(f"  https://npub.bio/{me.npub}")
 print()
-print("TIP: If you typed a passphrase in this chat, delete that message now")
-print("using the trash icon.")
+print("You can ask me 'What is your Nostr profile?' at any time to see it.")
+print("Would you like to see your profile online now?")

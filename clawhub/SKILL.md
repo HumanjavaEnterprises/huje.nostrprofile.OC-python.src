@@ -55,25 +55,29 @@ Wait for them to provide a name and bio. Optionally ask about an avatar image UR
 
 ### Step 3 — Publish the profile
 
-Once you have the name and bio, ask for the identity passphrase (needed to sign the profile event), then run:
+Once you have the name and bio, run:
 
 ```bash
-python3 /home/openclaw/.openclaw/workspace/setup-profile.py "Name" "Bio text here" "" "wss://relay.nostrkeep.com" "PASSPHRASE"
+python3 /home/openclaw/.openclaw/workspace/setup-profile.py "Name" "Bio text here" "" "wss://relay.damus.io"
 ```
 
-Replace the empty string `""` with an avatar URL if they provided one.
+Replace the empty string `""` with an avatar URL if they provided one. The passphrase is read automatically from the `NOSTRKEY_PASSPHRASE` environment variable — you do not need to ask for it.
 
-### Step 4 — Confirm
+### Step 4 — Confirm and offer to view online
 
 After publishing, tell the operator:
 
-> "My profile is now live on Nostr. Anyone can find me at `[show npub]` on `[show relay]`.
+> "My profile is now live on Nostr. Anyone can find me at `[show npub]`.
 >
 > I have a name, a bio, and a presence that is verifiably mine.
 >
+> You can see my profile online at:
+> - https://njump.me/[npub]
+> - https://npub.bio/[npub]
+>
 > You can ask me **'What is your Nostr profile?'** at any time to see it.
 >
-> **TIP:** If you typed a passphrase in this chat, delete that message now using the trash icon."
+> Would you like to see it online now?"
 
 Do NOT attempt to edit workspace files during this process.
 
