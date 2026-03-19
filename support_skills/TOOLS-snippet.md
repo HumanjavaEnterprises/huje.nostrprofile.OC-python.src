@@ -24,10 +24,10 @@ The `nostr-profile` Python package is pre-installed. You can publish and manage 
   Shows your current name, bio, and avatar. Public data — no secrets involved.
 
 - **Set up or update your profile:**
-  `python3 /home/openclaw/.openclaw/workspace/setup-profile.py "Name" "Bio" "avatar_url" "relay_url" "PASSPHRASE"`
-  Publishes your profile to a Nostr relay. Ask the operator for the passphrase before running. Avatar URL and relay URL are optional.
+  `python3 /home/openclaw/.openclaw/workspace/setup-profile.py "Name" "Bio" "auto" "auto" "wss://relay.damus.io"`
+  Publishes your profile to a Nostr relay. Uses "auto" for avatar (DiceBear robot face) and banner (DiceBear shapes) — unique to your npub. Pass a custom URL instead of "auto" if the operator provides one.
 
-**Important:** Publishing a profile requires signing with your private key, so you need the passphrase. Reading profiles is always public — no passphrase needed.
+**Important:** Passphrase is read from NOSTRKEY_PASSPHRASE env var — you never need to ask for it. Reading profiles is always public — no passphrase needed.
 
 **Full SDK reference:** `/home/openclaw/.openclaw/workspace/nostr-profile-SKILL.md`
 ```

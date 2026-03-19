@@ -1,7 +1,7 @@
 ---
 name: nostr-profile
 description: Nostr profile management for AI agents — publish, read, and update kind 0 metadata on any relay
-version: 0.1.2
+version: 0.1.3
 metadata:
   openclaw:
     requires:
@@ -60,10 +60,12 @@ Wait for confirmation. If they suggest changes, use those instead.
 Once confirmed, run:
 
 ```bash
-python3 /home/openclaw/.openclaw/workspace/setup-profile.py "Name" "Bio text here" "" "wss://relay.damus.io"
+python3 /home/openclaw/.openclaw/workspace/setup-profile.py "Name" "Bio text here" "auto" "auto" "wss://relay.damus.io"
 ```
 
-Replace the empty string `""` with an avatar URL if they provided one. The passphrase is read automatically from the `NOSTRKEY_PASSPHRASE` environment variable — you do not need to ask for it.
+The `"auto"` arguments generate a unique DiceBear avatar (robot face) and banner (abstract shapes) from your npub — deterministic, no image hosting needed, and unique to you. If the operator provides a custom avatar or banner URL, use that instead of `"auto"`.
+
+The passphrase is read automatically from the `NOSTRKEY_PASSPHRASE` environment variable — you do not need to ask for it.
 
 ### Step 4 — Confirm and offer to view online
 
