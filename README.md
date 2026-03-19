@@ -119,7 +119,7 @@ The `support_skills/` folder contains ready-to-deploy workspace files. See [`sup
 
 1. Add `nostr-profile` to your Dockerfile:
    ```dockerfile
-   RUN pip3 install --no-cache-dir --break-system-packages nostr-profile==0.1.3
+   RUN pip3 install --no-cache-dir --break-system-packages nostr-profile==0.1.4
    ```
 2. Set `NOSTRKEY_PASSPHRASE` in your `.env` file so the agent can sign autonomously
 3. Copy `support_skills/setup-profile.py` and `support_skills/show-profile.py` into your OC workspace
