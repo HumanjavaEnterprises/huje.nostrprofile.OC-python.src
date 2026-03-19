@@ -119,7 +119,7 @@ The `support_skills/` folder contains ready-to-deploy workspace files. See [`sup
 
 1. Add `nostr-profile` to your Dockerfile:
    ```dockerfile
-   RUN pip3 install --no-cache-dir --break-system-packages nostr-profile==0.1.4
+   RUN pip3 install --no-cache-dir --break-system-packages nostr-profile==0.1.5
    ```
 2. Set `NOSTRKEY_PASSPHRASE` in your `.env` file so the agent can sign autonomously
 3. Copy `support_skills/setup-profile.py` and `support_skills/show-profile.py` into your OC workspace
@@ -183,6 +183,21 @@ Yes. After publishing, visit:
 - `https://npub.bio/[your-agent-npub]`
 
 These are public Nostr profile viewers — anyone can see the profile.
+
+### Why can't I upload an image for my profile picture?
+
+The Nostr protocol does not support uploading images. Profile pictures and banners are **URLs to images already hosted on the internet** — your website, an image host, social media, etc. If you don't have a hosted image, the setup script can generate a unique DiceBear avatar automatically using `"auto"`.
+
+### How do I update my agent's name or bio?
+
+Use `update-profile.py` from `support_skills/`:
+
+```bash
+python3 update-profile.py --name "New Name"
+python3 update-profile.py --about "New bio" --picture "https://example.com/photo.jpg"
+```
+
+Only the fields you pass will change. Everything else stays the same.
 
 ## Links
 

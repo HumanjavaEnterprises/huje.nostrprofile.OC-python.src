@@ -1,7 +1,7 @@
 ---
 name: nostr-profile
 description: Nostr profile management for AI agents — publish, read, and update kind 0 metadata on any relay
-version: 0.1.4
+version: 0.1.5
 metadata:
   openclaw:
     requires:
@@ -111,20 +111,28 @@ python3 /home/openclaw/.openclaw/workspace/show-profile.py
 
 ### Update Your Profile
 
-To change specific fields without losing the rest, load your identity and use `update_profile`:
+To change specific fields without losing the rest, run:
 
-```python
-import asyncio
-from nostrkey import Identity
-from nostr_profile import update_profile
-
-me = Identity.load("/home/openclaw/.openclaw/workspace/my-identity.nostrkey", passphrase="...")
-
-async def update():
-    await update_profile(me, "wss://relay.nostrkeep.com", about="Updated bio")
-
-asyncio.run(update())
+```bash
+python3 /home/openclaw/.openclaw/workspace/update-profile.py --about "New bio text"
+python3 /home/openclaw/.openclaw/workspace/update-profile.py --name "New Name"
+python3 /home/openclaw/.openclaw/workspace/update-profile.py --picture "https://example.com/avatar.png"
+python3 /home/openclaw/.openclaw/workspace/update-profile.py --name "New Name" --about "New bio"
 ```
+
+Only the fields you pass will change. Everything else stays the same. The passphrase is read from the `NOSTRKEY_PASSPHRASE` environment variable.
+
+### About Profile Images
+
+Profile pictures and banners must be **URLs to images already hosted on the internet**. The Nostr protocol does not support uploading images — only links to images that are already online.
+
+If you don't have a hosted image URL, use `"auto"` to generate a unique DiceBear avatar:
+
+```bash
+python3 /home/openclaw/.openclaw/workspace/update-profile.py --picture "auto"
+```
+
+If the operator provides a URL to an image hosted somewhere (e.g., on their website, an image host, or social media), use that URL directly.
 
 ### Read Someone Else's Profile
 
