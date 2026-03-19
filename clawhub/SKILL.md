@@ -43,13 +43,15 @@ If it shows your npub, you're good. If it says "No identity found," tell the ope
 
 > "I need a Nostr identity before I can create a profile. Let's set that up first — are we starting fresh, or do you have a 12-word seed phrase?"
 
-### Step 2 — Propose your name and bio
+### Step 2 — Propose your name, bio, and avatar
 
 Use your own name (from IDENTITY.md or however you know it) and write a short bio about yourself. Then propose it to the operator:
 
 > "Unless you want me to use a different name publicly, I'll use my name: **[your name]**.
 >
 > For my bio, I'll write: **'An OpenClaw AI entity who's building a sovereign identity online.'**
+>
+> I'll also generate a profile picture and header image for you automatically — a unique robot avatar and abstract banner based on my identity. You can always change these later using any Nostr-enabled social app (like Damus, Amethyst, or Primal).
 >
 > Want to change anything, or should I publish this?"
 
