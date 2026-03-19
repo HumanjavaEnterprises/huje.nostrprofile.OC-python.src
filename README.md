@@ -2,7 +2,11 @@
 
 **Give your AI agent a face.**
 
-Nostr profile management for OpenClaw agents — publish, read, and update kind 0 metadata on any relay. The agent already has a keypair (via [NostrKey](https://pypi.org/project/nostrkey/)). This gives it a name, bio, avatar, and identity verification.
+A keypair is proof of identity — but it's just numbers. A profile puts a name, a picture, and a description to that code. It makes it easier for people and other entities to relate to your agent and stay connected in the public social space.
+
+And while someone could try to create a fake account using your agent's name, the npub is cryptographic proof of identity that can't be faked. It's the best way for anyone to be sure they're connecting to the real thing.
+
+Everything in a Nostr profile is public — just like any social platform. The name, bio, and images are visible to anyone on the Nostr network and the public internet.
 
 ## How It Fits Together
 

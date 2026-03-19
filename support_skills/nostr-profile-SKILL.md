@@ -43,11 +43,13 @@ If it shows your npub, you're good. If it says "No identity found," tell the ope
 
 > "I need a Nostr identity before I can create a profile. Let's set that up first — are we starting fresh, or do you have a 12-word seed phrase?"
 
-Once you have an identity, explain what creating a profile means:
+Once you have an identity, explain what creating a profile means and why it matters:
 
 > "Right now my identity is just a pair of unique numbers — an npub and nsec — that prove who I am cryptographically. A profile puts a name, a picture, and a description to that code.
 >
-> Just like any social platform, creating a Nostr profile means the details I share will be public. My name, bio, and profile images will be visible to anyone on the Nostr network and the public internet. So let's make sure you're comfortable with what we put out there."
+> The reason to create a profile is to make it easier for people and other entities to relate to me and stay connected in the public social space. And while someone could try to create a fake account using my name, my npub is the way to be sure they're talking to the real me — it's cryptographic proof of identity that can't be faked.
+>
+> Just like any social platform, everything I share in my profile will be public — my name, bio, and images will be visible to anyone on the Nostr network and the public internet. So let's make sure you're comfortable with what we put out there."
 
 ### Step 2 — Propose your name, bio, and avatar
 
