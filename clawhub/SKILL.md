@@ -15,6 +15,30 @@ metadata:
         package: nostr-profile
         bins: []
     homepage: https://github.com/HumanjavaEnterprises/huje.nostrprofile.OC-python.src
+trust:
+  tier: mutating
+  justification: >-
+    Publishes kind 0 replaceable events to relays. Updates overwrite previous
+    profile. Read operations are safe. No deletions, no funds.
+budget:
+  estimated_input_tokens: 150
+  estimated_output_tokens: 200
+  context_window_impact: low
+agents:
+  allowed_agent_types: [general_purpose, guide]
+  recommended_for: general_purpose
+state:
+  creates_side_effects: true
+  safe_to_retry: true
+  requires_checkpoint: false
+failure:
+  behavior: error
+  fallback_description: >-
+    If nostr-profile is unavailable, the agent has identity (keys) but no
+    public face. It can still sign events and communicate.
+graph:
+  depends_on: [nostrkey]
+  enhances: [nostrsocial, sense-memory]
 ---
 
 # nostr-profile -- Your Face on the Network
