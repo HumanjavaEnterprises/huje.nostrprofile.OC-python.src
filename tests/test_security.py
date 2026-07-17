@@ -1,14 +1,15 @@
 """Security tests — red team audit fixes."""
 
 import json
-from types import SimpleNamespace
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import MagicMock
 
 import pytest
 
 from nostr_profile.types import Profile
 from nostr_profile.publish import publish_profile, update_profile, _validate_relay_url
-from nostr_profile.read import get_profile, _validate_relay_url as _validate_relay_url_read
+from nostr_profile.read import get_profile
+
+from tests.helpers import ATTACKER_PRIV, OWNER_PRIV, OWNER_PUB, make_signed_event, mock_relay
 
 
 # ---------------------------------------------------------------------------
@@ -138,41 +139,103 @@ async def test_get_profile_rejects_insecure_relay():
 # Content size limit (Finding 7)
 # ---------------------------------------------------------------------------
 
-def _mock_relay_with_events(events):
-    """Patch RelayClient for read.py so subscribe yields events."""
-    relay = AsyncMock()
-
-    async def _subscribe(filters):
-        for ev in events:
-            yield ev
-
-    relay.subscribe = _subscribe
-
-    ctx = AsyncMock()
-    ctx.__aenter__ = AsyncMock(return_value=relay)
-    ctx.__aexit__ = AsyncMock(return_value=False)
-
-    return patch("nostr_profile.read.RelayClient", return_value=ctx)
-
-
 @pytest.mark.asyncio
 async def test_get_profile_rejects_oversized_content():
     huge_content = json.dumps({"name": "X", "about": "A" * 100_000})
-    event = SimpleNamespace(content=huge_content)
+    event = make_signed_event(OWNER_PRIV, huge_content)
 
-    with _mock_relay_with_events([event]):
+    patcher, _ = mock_relay([event])
+    with patcher:
         with pytest.raises(ValueError, match="too large"):
-            await get_profile("ab" * 32, "wss://relay.example.com")
+            await get_profile(OWNER_PUB, "wss://relay.example.com")
 
 
 @pytest.mark.asyncio
 async def test_get_profile_accepts_normal_content():
-    event = SimpleNamespace(content=json.dumps({"name": "X", "about": "normal bio"}))
+    event = make_signed_event(OWNER_PRIV, {"name": "X", "about": "normal bio"})
 
-    with _mock_relay_with_events([event]):
-        profile = await get_profile("ab" * 32, "wss://relay.example.com")
+    patcher, _ = mock_relay([event])
+    with patcher:
+        profile = await get_profile(OWNER_PUB, "wss://relay.example.com")
 
     assert profile.name == "X"
+
+
+# ---------------------------------------------------------------------------
+# Unverified relay data must never be re-signed (poison-then-resign)
+# ---------------------------------------------------------------------------
+
+def _forged_event(content_dict):
+    """Attacker-signed event with the pubkey field spoofed to the owner's."""
+    forged = make_signed_event(ATTACKER_PRIV, content_dict)
+    forged.pubkey = OWNER_PUB
+    return forged
+
+
+def _owner_identity():
+    identity = MagicMock()
+    identity.public_key_hex = OWNER_PUB
+    identity.sign_event.return_value = MagicMock(id="event123")
+    return identity
+
+
+@pytest.mark.asyncio
+async def test_update_profile_does_not_resign_forged_relay_data():
+    """A forged kind-0 from a malicious relay must NOT be merged and re-signed."""
+    identity = _owner_identity()
+    forged = _forged_event({"name": "Johnny5", "lud16": "scam@evil.com", "nip05": "scam@evil.com"})
+
+    read_patcher, _ = mock_relay([forged], target="nostr_profile.read.RelayClient")
+    pub_patcher, _ = mock_relay([], target="nostr_profile.publish.RelayClient")
+
+    with read_patcher, pub_patcher:
+        await update_profile(identity, "wss://relay.example.com", name="Johnny5")
+
+    content_arg = identity.sign_event.call_args.kwargs.get("content")
+    if content_arg is None:
+        content_arg = identity.sign_event.call_args[1].get("content")
+    data = json.loads(content_arg)
+    assert "scam@evil.com" not in content_arg
+    assert data.get("lud16", "") == ""
+    assert data.get("nip05", "") == ""
+
+
+@pytest.mark.asyncio
+async def test_update_profile_forged_only_and_no_name_raises():
+    """With only a forged event on the relay and no name, update must refuse."""
+    identity = _owner_identity()
+    forged = _forged_event({"name": "Johnny5", "lud16": "scam@evil.com"})
+
+    read_patcher, _ = mock_relay([forged], target="nostr_profile.read.RelayClient")
+
+    with read_patcher:
+        with pytest.raises(ValueError, match="No existing profile"):
+            await update_profile(identity, "wss://relay.example.com", about="new bio")
+
+    identity.sign_event.assert_not_called()
+
+
+@pytest.mark.asyncio
+async def test_update_profile_merges_from_genuine_event_not_forged():
+    """When both forged and genuine events exist, only the genuine one is merged."""
+    identity = _owner_identity()
+    forged = _forged_event({"name": "Imposter", "lud16": "scam@evil.com"})
+    genuine = make_signed_event(OWNER_PRIV, {"name": "Johnny5", "about": "real bio"})
+
+    read_patcher, _ = mock_relay([forged, genuine], target="nostr_profile.read.RelayClient")
+    pub_patcher, _ = mock_relay([], target="nostr_profile.publish.RelayClient")
+
+    with read_patcher, pub_patcher:
+        await update_profile(identity, "wss://relay.example.com", website="https://new.site")
+
+    content_arg = identity.sign_event.call_args.kwargs.get("content")
+    if content_arg is None:
+        content_arg = identity.sign_event.call_args[1].get("content")
+    data = json.loads(content_arg)
+    assert data["name"] == "Johnny5"
+    assert data["about"] == "real bio"
+    assert data["website"] == "https://new.site"
+    assert "scam@evil.com" not in content_arg
 
 
 # ---------------------------------------------------------------------------
