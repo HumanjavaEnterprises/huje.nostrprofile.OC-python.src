@@ -6,7 +6,12 @@ from unittest.mock import MagicMock
 import pytest
 
 from nostr_profile.types import Profile
-from nostr_profile.publish import publish_profile, update_profile, _validate_relay_url
+from nostr_profile.publish import (
+    ProfileClient,
+    publish_profile,
+    update_profile,
+    _validate_relay_url,
+)
 from nostr_profile.read import get_profile
 
 from tests.helpers import ATTACKER_PRIV, OWNER_PRIV, OWNER_PUB, make_signed_event, mock_relay
@@ -250,3 +255,74 @@ async def test_pubkey_error_truncates_value():
         await get_profile(long_input, "wss://relay.example.com")
     # The error message should NOT contain the full 1000-char input
     assert len(str(exc_info.value)) < 200
+
+
+# ---------------------------------------------------------------------------
+# ProfileClient __repr__ redaction (Finding 10)
+# ---------------------------------------------------------------------------
+
+class _FakeIdentity:
+    """Minimal identity stub with secret fields for testing redaction."""
+    public_key_hex = "ab" * 32
+    private_key_hex = "cd" * 32
+    nsec = "nsec1fakesecretkeythatmustnotappearinrepr000000000000000000"
+
+
+def test_profileclient_repr_does_not_contain_nsec():
+    """ProfileClient repr must not leak the nsec."""
+    identity = _FakeIdentity()
+    client = ProfileClient(identity, "wss://relay.example.com")
+    r = repr(client)
+    assert "nsec1" not in r
+    assert identity.nsec not in r
+
+
+def test_profileclient_repr_does_not_contain_private_key():
+    """ProfileClient repr must not leak the private key hex."""
+    identity = _FakeIdentity()
+    client = ProfileClient(identity, "wss://relay.example.com")
+    r = repr(client)
+    assert identity.private_key_hex not in r
+
+
+def test_profileclient_repr_shows_truncated_pubkey():
+    """ProfileClient repr should show a truncated pubkey for identification."""
+    identity = _FakeIdentity()
+    client = ProfileClient(identity, "wss://relay.example.com")
+    r = repr(client)
+    assert "ProfileClient(" in r
+    assert identity.public_key_hex[:8] in r
+    assert "..." in r
+
+
+def test_profileclient_repr_shows_relay_url():
+    """ProfileClient repr should include the relay URL (not secret)."""
+    identity = _FakeIdentity()
+    client = ProfileClient(identity, "wss://relay.example.com")
+    r = repr(client)
+    assert "wss://relay.example.com" in r
+
+
+def test_profileclient_str_does_not_contain_nsec():
+    """str(client) must also be safe — falls through to __repr__."""
+    identity = _FakeIdentity()
+    client = ProfileClient(identity, "wss://relay.example.com")
+    s = str(client)
+    assert "nsec1" not in s
+    assert identity.private_key_hex not in s
+
+
+def test_profileclient_repr_in_format_string():
+    """Embedding in f-strings or format() must not leak secrets."""
+    identity = _FakeIdentity()
+    client = ProfileClient(identity, "wss://relay.example.com")
+    msg = f"Client is {client!r}"
+    assert identity.private_key_hex not in msg
+    assert identity.nsec not in msg
+
+
+def test_profileclient_rejects_insecure_relay():
+    """ProfileClient constructor should reject non-wss relay URLs."""
+    identity = _FakeIdentity()
+    with pytest.raises(ValueError, match="wss://"):
+        ProfileClient(identity, "ws://relay.example.com")

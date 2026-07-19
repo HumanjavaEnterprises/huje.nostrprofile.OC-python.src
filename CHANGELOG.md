@@ -1,5 +1,27 @@
 # Changelog
 
+## 0.2.1 — 2026-07-19
+
+### Reconciliation
+
+- Reconciled the local repo with PyPI, which was ahead at `0.2.0`. The
+  published `0.2.0` (built from earlier March work) introduced `ProfileClient`
+  but did **not** contain the July `get_profile` verify-before-use security
+  fix. This release merges both: it adds `ProfileClient` **and** keeps the
+  relay event verification.
+
+### Added
+
+- `ProfileClient` — stateful convenience wrapper holding an identity + relay
+  URL, exposing `publish`, `update`, and `get`. Its `__repr__` is redacted
+  (truncated pubkey + relay URL only) so identity secrets never leak in logs
+  or tracebacks. `get()` delegates to the verified `get_profile`.
+
+### Changed
+
+- `nostrkey` dependency floor raised to `>=0.3.0` (required for
+  `nostrkey.events.verify_event`, used by the July security fix).
+
 ## 0.1.10 — 2026-07-17
 
 ### Security

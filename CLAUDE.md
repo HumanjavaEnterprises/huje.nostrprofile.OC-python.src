@@ -13,8 +13,8 @@ pytest -v
 
 - `src/nostr_profile/` — package source
   - `types.py` — Profile dataclass, field validation, metadata serialization, diff
-  - `publish.py` — publish_profile, update_profile (kind 0 replaceable events)
-  - `read.py` — get_profile (fetch kind 0 from relay)
+  - `publish.py` — publish_profile, update_profile (kind 0 replaceable events), ProfileClient (stateful identity+relay wrapper with redacted __repr__)
+  - `read.py` — get_profile (fetch kind 0 from relay, verify-before-use)
 - `tests/` — pytest suite
 - `clawhub/` — OpenClaw skill metadata
 - `examples/` — runnable examples
@@ -22,7 +22,7 @@ pytest -v
 ## Conventions
 
 - Python 3.10+, hatchling build, ruff linter (100 char line length)
-- Dependency: `nostrkey>=0.1.1` only
+- Dependency: `nostrkey>=0.3.0` only (needs `nostrkey.events.verify_event` for relay event verification)
 - Import matches package name: `pip install nostr-profile` → `from nostr_profile import Profile`
 - Kind 0 metadata is a replaceable event — publishing overwrites the previous profile
 - `update_profile` fetches current, merges changes, republishes (no field clobbering)

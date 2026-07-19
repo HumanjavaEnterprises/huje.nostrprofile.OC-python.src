@@ -21,6 +21,52 @@ def _validate_relay_url(relay_url: str) -> None:
         )
 
 
+class ProfileClient:
+    """Convenience wrapper that holds an identity + relay for profile ops.
+
+    Provides a stateful alternative to the bare functions. The __repr__
+    is redacted so identity secrets never leak in logs or tracebacks.
+    """
+
+    def __init__(self, identity: Identity, relay_url: str) -> None:
+        _validate_relay_url(relay_url)
+        self._identity = identity
+        self._relay_url = relay_url
+
+    def __repr__(self) -> str:
+        """Redacted repr — never expose identity secrets."""
+        return (
+            f"ProfileClient(pubkey={self._identity.public_key_hex[:8]}..., "
+            f"relay_url={self._relay_url!r})"
+        )
+
+    @property
+    def pubkey(self) -> str:
+        """The identity's public key (hex)."""
+        return self._identity.public_key_hex
+
+    @property
+    def relay_url(self) -> str:
+        """The relay URL."""
+        return self._relay_url
+
+    async def publish(self, profile: Profile) -> str:
+        """Publish a complete profile."""
+        return await publish_profile(self._identity, profile, self._relay_url)
+
+    async def update(self, **kwargs) -> str:
+        """Update specific profile fields."""
+        return await update_profile(self._identity, self._relay_url, **kwargs)
+
+    async def get(self) -> Profile | None:
+        """Fetch the current profile.
+
+        Delegates to get_profile, which verifies every relay event
+        (kind 0, correct author, valid id + signature) before trusting it.
+        """
+        return await get_profile(self._identity.public_key_hex, self._relay_url)
+
+
 async def publish_profile(
     identity: Identity,
     profile: Profile,

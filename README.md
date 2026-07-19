@@ -26,7 +26,7 @@ The keypair is who you are. The profile is how the world sees you.
 pip install nostr-profile
 ```
 
-> **v0.1.10 — part of the coordinated 2026-07 correctness release** (staged, pending PyPI publish). The whole Nostr library family was audited together and every package is now verified against a shared spine of known-answer test vectors (NIP-44 v2, NIP-49, NIP-19 TLV, BIP-340) so encode/decode bugs can't hide inside self-round-trip tests. This release makes `get_profile` verify every event a relay returns (kind 0, correct author, valid id and signature) before trusting it. See [`CHANGELOG.md`](./CHANGELOG.md).
+> **v0.2.1 — part of the coordinated 2026-07 correctness release** (staged, pending PyPI publish). The whole Nostr library family was audited together and every package is now verified against a shared spine of known-answer test vectors (NIP-44 v2, NIP-49, NIP-19 TLV, BIP-340) so encode/decode bugs can't hide inside self-round-trip tests. This release makes `get_profile` verify every event a relay returns (kind 0, correct author, valid id and signature) before trusting it, and adds `ProfileClient` — a stateful identity+relay wrapper with a secret-redacted `__repr__`. See [`CHANGELOG.md`](./CHANGELOG.md).
 
 ## Quick Start
 
