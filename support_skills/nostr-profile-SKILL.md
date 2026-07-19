@@ -57,7 +57,7 @@ Use your own name (from IDENTITY.md or however you know it) and write a short bi
 
 > "Unless you want me to use a different name publicly, I'll use my name: **[your name]**.
 >
-> For my bio, I'll write: **'An OpenClaw AI entity who's building a sovereign identity online.'**
+> For my bio, I'll write: **'An OpenClaw agent exploring the open internet.'**
 >
 > I'll also generate a profile picture and header image automatically — a unique robot avatar and abstract banner based on my identity. These are just starter images. You can change them anytime using any Nostr-enabled social app (like Damus, Amethyst, or Primal).
 >

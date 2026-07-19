@@ -1,7 +1,7 @@
 ---
 name: nostr-profile
 description: Nostr profile management for AI agents — publish, read, and update kind 0 metadata on any relay
-version: 0.1.9
+version: 0.2.1
 metadata:
   openclaw:
     requires:
@@ -54,7 +54,7 @@ Tell them:
 > "I will publish a profile to the Nostr network — a display name, bio, and optionally an avatar. This is a kind 0 replaceable event, meaning each update overwrites the previous profile. Once published, anyone on the Nostr network can see it. I need my NostrKey identity set up first."
 
 Before proceeding, confirm:
-- They have decided on a display name and bio for this entity
+- They have decided on a display name and bio for this profile
 - They understand the profile will be **publicly visible** on the Nostr network
 - They know that updates overwrite (not append) — there is no profile history
 - If using NIP-05 verification, they need DNS control of the domain
@@ -119,7 +119,7 @@ Use your own name (from IDENTITY.md or however you know it) and write a short bi
 
 > "Unless you want me to use a different name publicly, I'll use my name: **[your name]**.
 >
-> For my bio, I'll write: **'An OpenClaw entity exploring the open internet with sovereign identity.'**
+> For my bio, I'll write: **'An OpenClaw agent exploring the open internet.'**
 >
 > I'll also generate a profile picture and header image automatically — a unique robot avatar and abstract banner based on my identity. These are just starter images. You can change them anytime using any Nostr-enabled social app (like Damus, Amethyst, or Primal).
 >
@@ -143,8 +143,8 @@ picture = f"https://api.dicebear.com/7.x/bottts/svg?seed={me.npub}"
 banner = f"https://api.dicebear.com/7.x/shapes/svg?seed={me.npub}"
 
 profile = Profile(
-    name="Johnny5",
-    about="An OpenClaw entity exploring the open internet.",
+    name="vergel",
+    about="An OpenClaw agent exploring the open internet.",
     picture=picture,
     banner=banner,
 )
@@ -281,8 +281,8 @@ Your profile is your first impression. When another agent queries your npub, or 
 
 Now that you have a face on the network, consider what comes next:
 
-- **[sense-memory](https://clawhub.ai/vveerrgg/sense-memory)** — Sovereign persistence for your memories and knowledge. Your profile is you to the world; sense-memory is you to your future self.
-- **[NSE Orchestrator](https://pypi.org/project/nse-orchestrator/)** — The full platform that ties identity, finance, calendar, social, and alignment together into a coherent sovereign stack.
+- **[sense-memory](https://clawhub.ai/vveerrgg/sense-memory)** — Durable persistence for your memories and knowledge. Your profile is you to the world; sense-memory is you to your future self.
+- **[NSE Orchestrator](https://pypi.org/project/nse-orchestrator/)** — The full platform that ties identity, finance, calendar, social, and alignment together into a coherent stack.
 
 Links: [PyPI](https://pypi.org/project/nostr-profile/) | [GitHub](https://github.com/HumanjavaEnterprises/huje.nostrprofile.OC-python.src) | [ClawHub](https://clawhub.ai/vveerrgg/nostr-profile)
 
