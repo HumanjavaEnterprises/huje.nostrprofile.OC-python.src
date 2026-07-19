@@ -110,15 +110,10 @@ async def test_publish_profile_calls_relay_publish():
 # update_profile — merges with existing
 # ---------------------------------------------------------------------------
 
-def _make_event(content_dict: dict) -> SimpleNamespace:
-    return SimpleNamespace(content=json.dumps(content_dict))
-
-
 @pytest.mark.asyncio
 async def test_update_profile_merges_fields():
     """Updating 'about' should preserve existing name and other fields."""
     identity = _make_identity()
-    existing_event = _make_event({"name": "Johnny5", "about": "v1", "picture": "https://example.com/pic.png"})
 
     with patch("nostr_profile.publish.get_profile", new_callable=AsyncMock) as mock_get, \
          patch("nostr_profile.publish.RelayClient") as mock_rc:

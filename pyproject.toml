@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "nostr-profile"
-version = "0.1.9"
+version = "0.2.1"
 description = "Nostr profile management for OpenClaw AI agents — publish, read, and update kind 0 metadata"
 readme = "README.md"
 license = "MIT"
@@ -33,7 +33,7 @@ classifiers = [
     "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 dependencies = [
-    "nostrkey>=0.1.1",
+    "nostrkey>=0.3.0",
 ]
 
 [project.optional-dependencies]

@@ -4,6 +4,7 @@ import asyncio
 import re
 import json
 
+from nostrkey.events import verify_event
 from nostrkey.relay import RelayClient
 
 from .types import Profile, KIND_METADATA
@@ -62,10 +63,29 @@ async def get_profile(
 
     events = await asyncio.wait_for(_fetch(), timeout=_RELAY_TIMEOUT)
 
-    if not events:
+    # Never trust relay data blindly: only accept events that are actually
+    # kind 0, actually authored by the requested pubkey, and carry a valid
+    # id + signature. Kind 0 is replaceable, so among the survivors the
+    # newest created_at wins. Anything else (forged, mismatched, tampered)
+    # is skipped — a malicious relay must not be able to poison the profile.
+    best = None
+    for event in events:
+        try:
+            if event.kind != KIND_METADATA:
+                continue
+            if event.pubkey != pubkey_hex:
+                continue
+            if not verify_event(event):
+                continue
+        except (AttributeError, TypeError, ValueError):
+            continue
+        if best is None or event.created_at > best.created_at:
+            best = event
+
+    if best is None:
         return None
 
-    content = events[0].content
+    content = best.content
     if len(content) > _MAX_CONTENT_SIZE:
         raise ValueError(
             f"Profile event content too large ({len(content)} bytes). "

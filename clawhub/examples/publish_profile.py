@@ -26,7 +26,7 @@ async def main():
     # Read it back
     fetched = await get_profile(identity.public_key_hex, relay)
     if fetched:
-        print(f"\nProfile on relay:")
+        print("\nProfile on relay:")
         print(f"  Name: {fetched.name}")
         print(f"  About: {fetched.about}")
         print(f"  NIP-05: {fetched.nip05}")
