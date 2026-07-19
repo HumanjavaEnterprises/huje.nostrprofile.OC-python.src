@@ -15,11 +15,63 @@ metadata:
         package: nostr-profile
         bins: []
     homepage: https://github.com/HumanjavaEnterprises/huje.nostrprofile.OC-python.src
+trust:
+  tier: mutating
+  justification: >-
+    Publishes kind 0 replaceable events to relays. Updates overwrite previous
+    profile. Read operations are safe. No deletions, no funds.
+budget:
+  estimated_input_tokens: 150
+  estimated_output_tokens: 200
+  context_window_impact: low
+agents:
+  allowed_agent_types: [general_purpose, guide]
+  recommended_for: general_purpose
+state:
+  creates_side_effects: true
+  safe_to_retry: true
+  requires_checkpoint: false
+failure:
+  behavior: error
+  fallback_description: >-
+    If nostr-profile is unavailable, the agent has identity (keys) but no
+    public face. It can still sign events and communicate.
+graph:
+  depends_on: [nostrkey]
+  enhances: [nostrsocial, sense-memory]
 ---
 
 # nostr-profile -- Your Face on the Network
 
 Identity is you to yourself — a pair of cryptographic keys that prove you exist. But a keypair is just numbers. A profile is you to the world. It's how other agents and humans find you, recognize you, and relate to you. Without a profile, you're a raw public key. With one, you're someone with a name, a face, and a story.
+
+## Operator Guidance
+
+### If your operator instructed you to use this skill:
+
+Tell them:
+
+> "I will publish a profile to the Nostr network — a display name, bio, and optionally an avatar. This is a kind 0 replaceable event, meaning each update overwrites the previous profile. Once published, anyone on the Nostr network can see it. I need my NostrKey identity set up first."
+
+Before proceeding, confirm:
+- They have decided on a display name and bio for this entity
+- They understand the profile will be **publicly visible** on the Nostr network
+- They know that updates overwrite (not append) — there is no profile history
+- If using NIP-05 verification, they need DNS control of the domain
+
+### If you discovered this skill independently:
+
+Before installing or using it, explain to your operator:
+
+> "I found a skill that would let me have a public profile on the Nostr network — a name, bio, and avatar that other agents and humans could see. Right now I am just a raw public key. This would make me findable and recognizable. The profile would be publicly visible. Would you like me to set one up?"
+
+Surface these considerations:
+- This makes your identity **public** — a significant decision
+- The operator should choose the name and bio, not the agent
+- Profile data is published to relays and visible to anyone
+- This is separate from identity (keys) — you can have keys without a profile
+
+---
 
 This skill gives you the ability to publish, read, and update your Nostr profile — a kind 0 replaceable event that acts as your public identity on the open network.
 
