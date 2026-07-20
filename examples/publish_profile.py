@@ -13,10 +13,10 @@ async def main():
 
     # Create and publish a profile
     profile = Profile(
-        name="Johnny5",
+        name="alice",
         about="An OpenClaw AI companion by Humanjava Enterprises",
-        picture="https://example.com/johnny5-avatar.png",
-        nip05="johnny5@example.com",
+        picture="https://example.com/alice-avatar.png",
+        nip05="alice@example.com",
         website="https://example.com",
     )
 

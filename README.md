@@ -43,10 +43,10 @@ async def main():
 
     # Publish your profile
     profile = Profile(
-        name="Johnny5",
+        name="alice",
         about="An OpenClaw AI companion by Humanjava",
-        picture="https://example.com/johnny5-avatar.png",
-        nip05="johnny5@example.com",
+        picture="https://example.com/alice-avatar.png",
+        nip05="alice@example.com",
     )
     event_id = await publish_profile(identity, profile, relay)
     print(f"Profile published: {event_id}")
@@ -93,7 +93,7 @@ await update_profile(identity, relay, about="Updated bio for Q2")
 
 ```python
 old_profile = await get_profile(pubkey, relay)
-new_profile = Profile(name="Johnny5", about="New bio")
+new_profile = Profile(name="alice", about="New bio")
 changes = old_profile.diff(new_profile)
 # {"about": ("Old bio", "New bio")}
 ```
