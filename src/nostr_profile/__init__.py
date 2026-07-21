@@ -4,7 +4,7 @@ from .types import Profile
 from .publish import ProfileClient, publish_profile, update_profile
 from .read import get_profile
 
-__version__ = "0.2.1"
+__version__ = "0.2.2"
 
 __all__ = [
     "Profile",
